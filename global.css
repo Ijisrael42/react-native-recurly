@@ -55,7 +55,7 @@
     }
 
     .tabs-active {
-        @apply bg-accent;
+        @apply size-12 items-center justify-center rounded-full bg-accent;
     }
 
     .tabs-glyph {
