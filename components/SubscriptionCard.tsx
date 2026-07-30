@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { Image, Pressable, Text, View } from 'react-native'
 
 const SubscriptionCard = ({ name, price, currency, icon, billing, color, category, plan, renewalDate, expanded, onPress, paymentMethod, startDate, status }:
-    Subscription) => {
+    SubscriptionCardProps) => {
     return (
         <Pressable
             onPress={onPress}
