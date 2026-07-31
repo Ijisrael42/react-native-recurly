@@ -7,7 +7,12 @@ export const tokenCache = {
             return localStorage.getItem(key);
         }
 
-        return SecureStore.getItemAsync(key);
+        try {
+            return await SecureStore.getItemAsync(key);
+        } catch (err) {
+            console.error("SecureStore getToken error:", err);
+            return null;
+        }
     },
 
     async saveToken(key: string, value: string) {
@@ -16,7 +21,11 @@ export const tokenCache = {
             return;
         }
 
-        await SecureStore.setItemAsync(key, value);
+        try {
+            await SecureStore.setItemAsync(key, value);
+        } catch (err) {
+            console.error("SecureStore saveToken error:", err);
+        }
     },
 
     async clearToken(key: string) {
@@ -25,6 +34,10 @@ export const tokenCache = {
             return;
         }
 
-        await SecureStore.deleteItemAsync(key);
+        try {
+            await SecureStore.deleteItemAsync(key);
+        } catch (err) {
+            console.error("SecureStore clearToken error:", err);
+        }
     },
 };
