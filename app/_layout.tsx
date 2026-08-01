@@ -1,7 +1,9 @@
 import "@/global.css";
 
 import { tokenCache } from "@/lib/tokenCache";
-import { ClerkProvider, useAuth } from "@clerk/expo";
+import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
+import { PostHogProvider } from "posthog-react-native";
+import { posthog } from "@/lib/posthog";
 
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
@@ -17,6 +19,7 @@ if (!publishableKey) {
 
 function Navigation() {
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
 
   const router = useRouter();
   const segments = useSegments();
@@ -33,7 +36,20 @@ function Navigation() {
     if (!isSignedIn && !inAuth) {
       router.replace("/(auth)/sign-in");
     }
-  }, [isLoaded, isSignedIn, segments]);
+  }, [isLoaded, isSignedIn, router, segments]);
+
+  useEffect(() => {
+    if (!user || !posthog) return;
+
+    posthog.identify(user.id, {
+      $set: {
+        ...(user.primaryEmailAddress?.emailAddress
+          ? { email: user.primaryEmailAddress.emailAddress }
+          : {}),
+        ...(user.fullName ? { name: user.fullName } : {}),
+      },
+    });
+  }, [user]);
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }
@@ -63,7 +79,13 @@ export default function RootLayout() {
       publishableKey={publishableKey!}
       tokenCache={tokenCache}
     >
-      <Navigation />
+      {posthog ? (
+        <PostHogProvider client={posthog}>
+          <Navigation />
+        </PostHogProvider>
+      ) : (
+        <Navigation />
+      )}
     </ClerkProvider>
   );
 }

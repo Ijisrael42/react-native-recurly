@@ -1,5 +1,6 @@
 import { useAuth, useUser } from '@clerk/expo'
 import { Feather } from '@expo/vector-icons'
+import { posthog } from '@/lib/posthog'
 import images from '@/constants/images'
 import { styled } from 'nativewind'
 import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
@@ -52,6 +53,8 @@ const Settings = () => {
                     style: 'destructive',
                     onPress: async () => {
                         try {
+                            posthog?.capture('logout_completed')
+                            posthog?.reset()
                             await signOut()
                         } catch (error) {
                             console.error('Error signing out:', error)
