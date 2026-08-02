@@ -63,9 +63,14 @@ export default function CreateSubscriptionModal({
     onClose();
   };
 
-  const parsedPrice = parseFloat(price);
+  const normalizedPrice = price.trim();
+  const isPriceFormatValid = /^\d+(?:\.\d{1,2})?$/.test(normalizedPrice);
+  const parsedPrice = Number(normalizedPrice);
   const isFormValid =
-    name.trim().length > 0 && !isNaN(parsedPrice) && parsedPrice > 0;
+    name.trim().length > 0 &&
+    isPriceFormatValid &&
+    Number.isFinite(parsedPrice) &&
+    parsedPrice > 0;
 
   const handleSubmit = () => {
     if (!isFormValid) return;
