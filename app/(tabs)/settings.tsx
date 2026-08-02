@@ -53,9 +53,9 @@ const Settings = () => {
                     style: 'destructive',
                     onPress: async () => {
                         try {
+                            await signOut()
                             posthog?.capture('logout_completed')
                             posthog?.reset()
-                            await signOut()
                         } catch (error) {
                             console.error('Error signing out:', error)
                         }
