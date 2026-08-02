@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -69,6 +70,7 @@ export default function SignIn() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        posthog?.capture("sign_in_completed");
         // Navigation guard in root layout will redirect to /(tabs)
       } else {
         console.warn("Sign in status not complete:", result.status);

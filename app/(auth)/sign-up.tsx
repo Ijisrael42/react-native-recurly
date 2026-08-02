@@ -13,6 +13,7 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -86,6 +87,7 @@ export default function SignUp() {
             // 2. Prepare verification (sends verification email)
             await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
+            posthog?.capture("sign_up_started");
             setPendingVerification(true);
         } catch (err: any) {
             console.error(err);
@@ -121,6 +123,7 @@ export default function SignUp() {
             if (completeSignUp.status === "complete") {
                 // 4. Set session active (sign in user)
                 await setActive({ session: completeSignUp.createdSessionId });
+                posthog?.capture("sign_up_completed");
                 // Navigation guard in root layout will redirect to /(tabs)
             } else {
                 console.warn("Sign up status not complete:", completeSignUp.status);
